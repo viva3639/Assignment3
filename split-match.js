@@ -1,17 +1,31 @@
 #!/usr/bin/env node
-var fs = require('fs')
-var http = require('http')
+var fs = require('fs');
+var stream = require('stream');
+var program = require('commander');
+ 
+program
+  .version('0.0.1')
+  .option('-p, --pattern [type]', 'Add-pattern [ptn] ', 'ptn')
+  .parse(process.argv);
 
-var data = fs.readFileSync('./input-sensor.txt')
 
-console.log("Test 3")
+var symb = program.pattern;
+if (symb === "." || symb === ",") {
+	var file = fs.readFileSync("input-sensor.txt");
+	var str = file.toString().trim();
+	console.log("----------------Input----------------");
+	console.log(str);
 
-function onRequest(request, response){
-	response.writeHead(200, {"Content-type":"text"})
-	response.write(data)
-	response.write("\n\nNext line\n")
-	response.write(data)
-	response.end();
+	var arr = str.split(symb+" ");
+	var last = arr[arr.length-1];
+	if( last[last.length-1] === symb ){
+		arr[arr.length-1] = last.replace(symb, "");
+	} else {
+		arr.pop();
+	}
+
+	console.log("----------------OutPut----------------");
+	console.log(arr);	
 }
 
-http.createServer(onRequest).listen(8888)
+
